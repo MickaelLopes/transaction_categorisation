@@ -1,0 +1,18 @@
+schema: '2.0'
+stages:
+  categorise:
+    cmd: python src/main.py
+    deps:
+    - path: data/transactions.csv
+      hash: md5
+      md5: f9ccb5bab86ef1c46f63bb844e2be311
+      size: 196
+    - path: src/main.py
+      hash: md5
+      md5: e95a808b07241b736b30e8cb9186bc2f
+      size: 6605
+    outs:
+    - path: data/report.csv
+      hash: md5
+      md5: 3f3c8fd56b96f3bafb4bc57cf8f97a31
+      size: 160

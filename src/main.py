@@ -103,7 +103,7 @@ def dq_data(data : pd.DataFrame) -> pd.DataFrame:
         log.error(f"Data quality checks failed: {e}")
         sys.exit(1)
     
-def categorise_transactions(account: str, department: str) -> str:
+def categorise_transaction(account: str, department: str) -> str:
     log.debug(f"Categorising transactions for account {account} and department {department}")
     if account.lower() == 'marketing' : 
         if department.lower() == 'traffic':
@@ -119,7 +119,7 @@ def categorise_transactions(account: str, department: str) -> str:
 def create_report(data: pd.DataFrame) -> pd.DataFrame:
     log.info("Creating report")
     # Calculating Category for each transaction
-    data["Category"] = data.apply(lambda x: categorise_transactions(x["Account"], x["Department"]), axis=1)
+    data["Category"] = data.apply(lambda x: categorise_transaction(x["Account"], x["Department"]), axis=1)
     # Allow to sort by 
     category_order = pd.CategoricalDtype(categories=["Traffic", "Marketing", "Other"], ordered=True)
     data["Category"] = data["Category"].astype(category_order)
@@ -136,18 +136,27 @@ def create_report(data: pd.DataFrame) -> pd.DataFrame:
     log.info("Report created successfully")
     return report
 
-def main(): 
+def transactions_categorisation(data: pd.DataFrame) -> pd.DataFrame: 
     log.info("Starting Transaction Categorisation process")
-    data = load_data(input_filepath)
     data = dq_data(data)
     data_report = create_report(data)
-    data_report.to_csv(output_filepath, index=False)
-    log.info(f"Report saved to {output_filepath}")
+    log.info("Transaction categorisation process completed")
+    return data_report
     
 if __name__ == "__main__":
     args = parser.parse_args()
     # Set logging level based on debug argument
     if args.debug:
         log.setLevel(logging.DEBUG)
-        
-    main()
+    
+    # Import data     
+    log.info("Import transaction data")
+    df_transaction = load_data(input_filepath)
+    log.info("Transaction data loaded successfully")
+    
+    # Create report
+    df_report = transactions_categorisation(df_transaction)
+
+    # Save report
+    df_report.to_csv(output_filepath, index=False)
+    log.info(f"Report saved to {output_filepath}")

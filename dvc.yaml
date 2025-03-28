@@ -1,0 +1,8 @@
+stages:
+  categorise:
+    cmd: python src/main.py
+    deps:
+      - data/transactions.csv
+      - src/main.py
+    outs:
+      - data/report.csv
